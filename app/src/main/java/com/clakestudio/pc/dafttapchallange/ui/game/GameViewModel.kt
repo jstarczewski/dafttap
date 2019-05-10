@@ -3,12 +3,14 @@ package com.clakestudio.pc.dafttapchallange.ui.game
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.clakestudio.pc.dafttapchallange.data.local.TopScoresDataSource
+import com.clakestudio.pc.dafttapchallange.data.local.TopScoresLocalDataSource
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-class GameViewModel : ViewModel() {
+class GameViewModel(topScoresLocalDataSource: TopScoresDataSource) : ViewModel() {
     // TODO: Implement the ViewModel
 
     private val prepareItems = arrayListOf<String>("3", "2", "1", "5", "4", "3", "2", "1")

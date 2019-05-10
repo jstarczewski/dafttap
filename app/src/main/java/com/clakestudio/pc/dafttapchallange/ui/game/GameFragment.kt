@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 
 import com.clakestudio.pc.dafttapchallange.R
+import com.clakestudio.pc.dafttapchallange.ViewModelFactory
 import com.clakestudio.pc.dafttapchallange.util.CountDownTimer
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -55,24 +56,26 @@ class GameFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(GameViewModel::class.java).apply {
-            time.observe(viewLifecycleOwner, Observer {
-                text_view_time.text = it
-            })
-            taps.observe(viewLifecycleOwner, Observer {
-                text_view_count.text = it.toString()
-            })
-            play.observe(viewLifecycleOwner, Observer {
-                text_view_play.text = it
-            })
-            dialog.observe(viewLifecycleOwner, Observer {
-                showAlertDialog(it)
-            })
-        }
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(activity!!.application))
+            .get(GameViewModel::class.java).apply {
+                time.observe(viewLifecycleOwner, Observer {
+                    text_view_time.text = it
+                })
+                taps.observe(viewLifecycleOwner, Observer {
+                    text_view_count.text = it.toString()
+                })
+                play.observe(viewLifecycleOwner, Observer {
+                    text_view_play.text = it
+                })
+                dialog.observe(viewLifecycleOwner, Observer {
+                    showAlertDialog(it)
+                })
+            }
         constrain_layout_game.setOnClickListener {
             viewModel.incrementTapsNumber()
         }
     }
+
 
     override fun onResume() {
         super.onResume()

@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 
 import com.clakestudio.pc.dafttapchallange.R
+import com.clakestudio.pc.dafttapchallange.ViewModelFactory
 import kotlinx.android.synthetic.main.records_fragment.*
 
 class RecordsFragment : Fragment() {
@@ -29,9 +31,9 @@ class RecordsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(RecordsViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(activity!!.application)).get(RecordsViewModel::class.java)
 
-        btNext.setOnClickListener {
+        button_play.setOnClickListener {
             findNavController().navigate(R.id.action_recordsFragment_to_gameFragment)
         }
 
