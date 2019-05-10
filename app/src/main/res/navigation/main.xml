@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    app:startDestination="@id/recordsFragment">
+    <fragment
+        android:id="@+id/recordsFragment"
+        android:name="com.clakestudio.pc.dafttapchallange.ui.records.RecordsFragment"
+        android:label="records_fragment"
+        tools:layout="@layout/records_fragment">
+        <action
+            android:id="@+id/action_recordsFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.clakestudio.pc.dafttapchallange.ui.game.GameFragment"
+        android:label="game_fragment"
+        tools:layout="@layout/game_fragment">
+        <action
+            android:id="@+id/action_gameEndFragment_to_recordsFragment"
+            app:destination="@id/recordsFragment" />
+    </fragment>
+
+</navigation>
