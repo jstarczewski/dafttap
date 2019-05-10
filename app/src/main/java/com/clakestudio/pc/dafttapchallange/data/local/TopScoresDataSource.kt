@@ -1,4 +1,4 @@
-package com.clakestudio.pc.dafttapchallange.ui.data
+package com.clakestudio.pc.dafttapchallange.data.local
 
 interface TopScoresDataSource {
 

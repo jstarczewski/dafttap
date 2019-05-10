@@ -60,7 +60,7 @@ class GameFragment : Fragment() {
                 text_view_time.text = it
             })
             taps.observe(viewLifecycleOwner, Observer {
-                text_view_county.text = it.toString()
+                text_view_count.text = it.toString()
             })
             play.observe(viewLifecycleOwner, Observer {
                 text_view_play.text = it
