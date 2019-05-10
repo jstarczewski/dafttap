@@ -30,4 +30,7 @@ ext {
 
     // Navigation
     navigationVersion = '1.0.0'
+
+    rxJavaVersion = '2.2.8'
+    rxAndroidVersion = '2.1.1'
 }
