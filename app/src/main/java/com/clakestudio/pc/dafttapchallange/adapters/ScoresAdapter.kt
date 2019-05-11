@@ -25,8 +25,7 @@ class ScoresAdapter(private var scores: List<Score>) : RecyclerView.Adapter<Scor
     class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(score: Int, timestamp: String) {
-            view.text_view_score.text = score.toString()
-            view.text_view_time.text = timestamp
+            view.text_view_score.text = "${score} taps on ${timestamp}"
         }
 
     }
