@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.clakestudio.pc.dafttapchallange.data.Score
 import com.clakestudio.pc.dafttapchallange.data.local.TopScoresDataSource
-import com.clakestudio.pc.dafttapchallange.data.local.TopScoresLocalDataSource
 import io.reactivex.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +17,7 @@ import kotlin.collections.ArrayList
 class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) : ViewModel() {
     // TODO: Implement the ViewModel
 
-    private val prepareItems = arrayListOf<String>("3", "2", "1", "PLAY")
+    private val prepareItems = arrayListOf<String>("2", "1", "PLAY")
     private val gameRunningItems = arrayListOf<String>("5", "4", "3", "2", "1")
     private var tapsNumber = 0
     private var isGameRunning = false
@@ -63,29 +62,8 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
                 topScoresLocalDataSource.saveScore(it)
             }
         }.observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe()
-
-
-        /*  if(scores.size == 5) {
-             i
-          }
-          else {
-              scores.add(Score(score,:wqa
-               "12"))
-          }*/
-
-        /*
-        val scores : ArrayList<Score> = arrayListOf()
-        scores.addAll(_scores.value!!)
-        val isIn = scores?.find { it.score == score } ?: -1
-        scores?.sortedBy { it.score }
-        if (isIn == score) {
-
-        }
-        else {
-
-        }*/
+                .subscribeOn(Schedulers.io())
+                .subscribe()
 
 
     }
@@ -113,47 +91,18 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
     }
 
     fun getTopScores() =
-        topScoresLocalDataSource.getTopScores()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe {
-                _scores.value = it
-            }
+            topScoresLocalDataSource.getTopScores()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe {
+                        _scores.value = it
+                    }
 
     fun init() {
+        _taps.value = 0
+        _time.value = "5"
         rtime.value = 5000
     }
-
-    /*   Observable.concatArray(
-           countDown(),
-           countDown()
-       ).observeOn(AndroidSchedulers.mainThread())
-           .subscribe({
-               if (it.equals("5")) {
-                   isGameRunning = true
-                   _play.value = "PLAY"
-               }
-               if (it.equals("1"))
-                   isGameRunning = false
-               _time.value = it
-           }, {
-
-           }, {
-           })*/
-
-/*
-    private fun countDown() =
-        Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-            .take(5000)
-            .map { gameRunningItems[it.toInt()] }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                _time.value = it
-            }, {
-
-            }, {
-                isGameRunning = false
-            })*/
 
     private fun exposeScore() {
         if (tapsNumber > 40)
@@ -163,36 +112,39 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
     }
 
     private fun prepare() = Flowable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-        .take(3, TimeUnit.SECONDS)
-        .map { prepareItems[it.toInt()] }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnComplete {
-            isGameRunning = true
-            _isRunning.value = true
-        }
-        .subscribe()
+            .take(3, TimeUnit.SECONDS)
+            .map { prepareItems[it.toInt()] }
+            .observeOn(AndroidSchedulers.mainThread())
+            .startWith("3")
+            .doOnComplete {
+                isGameRunning = true
+                _isRunning.value = true
+            }
+            .subscribe {
+                _play.value = it
+            }
 
     private fun countDown() = Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-        .take(8, TimeUnit.SECONDS)
-        .map { prepareItems[it.toInt()] }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnComplete {
-            _time.value = "0"
-            isGameRunning = false
-            saveScore(tapsNumber)
-            exposeScore()
-        }
-        .subscribe {
-            if (!isGameRunning) {
-                _play.value = it
-                _time.value = "5"
+            .take(8, TimeUnit.SECONDS)
+            .map { prepareItems[it.toInt()] }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                _time.value = "0"
+                isGameRunning = false
+                saveScore(tapsNumber)
+                exposeScore()
             }
-            if (it == "5" || isGameRunning) {
-                isGameRunning = true
-                _play.value = "PLAY"
-                _time.value = it
+            .subscribe {
+                if (!isGameRunning) {
+                    _play.value = it
+                    _time.value = "5"
+                }
+                if (it == "5" || isGameRunning) {
+                    isGameRunning = true
+                    _play.value = "PLAY"
+                    _time.value = it
+                }
             }
-        }
 }
 
 

@@ -41,15 +41,16 @@ class GameFragment : Fragment() {
     private lateinit var viewModel: GameViewModel
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.game_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        text_view_count_info.text = "Taps"
+        text_view_time_info.text = "Time"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,30 +60,32 @@ class GameFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(activity!!.application))
-            .get(GameViewModel::class.java).apply {
-                init()
-                time.observe(viewLifecycleOwner, Observer {
-                    text_view_time.text = it
-                })
-                taps.observe(viewLifecycleOwner, Observer {
-                    text_view_count.text = it.toString()
-                })
-                play.observe(viewLifecycleOwner, Observer {
-                    text_view_play.text = it
-                })
-                dialog.observe(viewLifecycleOwner, Observer {
-                    showAlertDialog(it)
-                })
-                isRunning.observe(viewLifecycleOwner, Observer {
-                    if (it) {
-                        if (viewModel.remainingTime.value != null && viewModel.remainingTime.value != 0L)
-                        prepareTimer(viewModel.remainingTime.value!!, 1000)
-                        countDownTimer.start()
-                    }
-                    else
-                        countDownTimer.cancel()
-                })
-            }
+                .get(GameViewModel::class.java).apply {
+                    init()
+                    time.observe(viewLifecycleOwner, Observer {
+                        text_view_time.text = it
+                    })
+                    taps.observe(viewLifecycleOwner, Observer {
+                        text_view_count.text = it.toString()
+                    })
+                    play.observe(viewLifecycleOwner, Observer {
+                        text_view_play.text = it
+                    })
+                    dialog.observe(viewLifecycleOwner, Observer {
+                        showAlertDialog(it)
+                    })
+                    isRunning.observe(viewLifecycleOwner, Observer {
+                        if (it) {
+                            if (viewModel.remainingTime.value != null && viewModel.remainingTime.value != 0L)
+                                prepareTimer()
+                            countDownTimer.start()
+                            hidePrepareCountdown()
+                        } else {
+                            countDownTimer.cancel()
+                            showPrepareCountdown()
+                        }
+                    })
+                }
         constrain_layout_game.setOnClickListener {
             viewModel.incrementTapsNumber()
         }
@@ -118,17 +121,7 @@ class GameFragment : Fragment() {
     }
 
 
-    fun a() =
-        Observable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .take(arraylsit.size.toLong())
-            .map { arraylsit[it.toInt()] }
-            .subscribe {
-                text_view_time.text = it
-            }
-
-
-    fun prepareTimer(time: Long, interval: Long) {
+    private fun prepareTimer() {
         countDownTimer = object : android.os.CountDownTimer(viewModel.remainingTime.value!!, 100) {
             override fun onFinish() {
                 viewModel.endGame()
@@ -141,5 +134,18 @@ class GameFragment : Fragment() {
         }
     }
 
+    fun showPrepareCountdown() {
+        text_view_play.animate()
+                .alpha(1.0F).apply {
+                    duration = 1000L
+                }.start()
+    }
+
+    fun hidePrepareCountdown() {
+        text_view_play.animate()
+                .alpha(0.0F).apply {
+                    duration = 1000L
+                }.start()
+    }
 
 }
