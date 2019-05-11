@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,12 +44,17 @@ class RecordsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(activity!!.application))
-            .get(RecordsViewModel::class.java)
+            .get(RecordsViewModel::class.java).apply {
+              scores.observe(viewLifecycleOwner, Observer {
+                  adapter.replaceData(it)
+              })
+            }
 
         button_play.setOnClickListener {
             findNavController().navigate(R.id.action_recordsFragment_to_gameFragment)
         }
         setUpRecyclerView()
+        viewModel.init()
 
         // TODO: Use the ViewModel
     }

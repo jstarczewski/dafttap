@@ -30,6 +30,8 @@ class GameFragment : Fragment() {
         addAll(s)
     }
 
+    lateinit var countDownTimer: android.os.CountDownTimer
+
     private val countedCompleter = CountDownTimer(8, 1, arraylsit, { text_view_time.text = it })
 
     companion object {
@@ -58,6 +60,7 @@ class GameFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(activity!!.application))
             .get(GameViewModel::class.java).apply {
+                init()
                 time.observe(viewLifecycleOwner, Observer {
                     text_view_time.text = it
                 })
@@ -70,6 +73,15 @@ class GameFragment : Fragment() {
                 dialog.observe(viewLifecycleOwner, Observer {
                     showAlertDialog(it)
                 })
+                isRunning.observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        if (viewModel.remainingTime.value != null && viewModel.remainingTime.value != 0L)
+                        prepareTimer(viewModel.remainingTime.value!!, 1000)
+                        countDownTimer.start()
+                    }
+                    else
+                        countDownTimer.cancel()
+                })
             }
         constrain_layout_game.setOnClickListener {
             viewModel.incrementTapsNumber()
@@ -79,7 +91,12 @@ class GameFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.init()
+        viewModel.resumeGame()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.pasueGame()
     }
 
     fun showAlertDialog(message: String) {
@@ -109,6 +126,20 @@ class GameFragment : Fragment() {
             .subscribe {
                 text_view_time.text = it
             }
+
+
+    fun prepareTimer(time: Long, interval: Long) {
+        countDownTimer = object : android.os.CountDownTimer(viewModel.remainingTime.value!!, 100) {
+            override fun onFinish() {
+                viewModel.endGame()
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                viewModel.setRemainingTime(millisUntilFinished)
+            }
+
+        }
+    }
 
 
 }

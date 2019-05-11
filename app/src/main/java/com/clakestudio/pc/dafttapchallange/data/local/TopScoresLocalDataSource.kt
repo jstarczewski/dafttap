@@ -1,14 +1,16 @@
 package com.clakestudio.pc.dafttapchallange.data.local
 
-class TopScoresLocalDataSource(scoresDao: TopScoresDao) : TopScoresDataSource {
+import com.clakestudio.pc.dafttapchallange.data.Score
+import io.reactivex.Flowable
 
-    override fun saveScore(record: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+class TopScoresLocalDataSource(private val scoresDao: TopScoresDao) : TopScoresDataSource {
+
+    override fun saveScore(score: Score) {
+        scoresDao.saveScore(DbScore(score.score, score.time))
     }
 
-    override fun getTopScores(): List<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+
+    override fun getTopScores(): Flowable<List<Score>> = scoresDao.getTopScores()
 
     companion object {
 
