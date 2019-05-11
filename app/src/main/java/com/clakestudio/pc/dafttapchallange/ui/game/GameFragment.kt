@@ -1,7 +1,6 @@
 package com.clakestudio.pc.dafttapchallange.ui.game
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,11 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.clakestudio.pc.dafttapchallange.R
 import com.clakestudio.pc.dafttapchallange.ViewModelFactory
 import com.clakestudio.pc.dafttapchallange.util.CountDownTimer
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.game_fragment.*
-import java.util.concurrent.TimeUnit
 
 
 class GameFragment : Fragment() {
@@ -41,16 +36,14 @@ class GameFragment : Fragment() {
     private lateinit var viewModel: GameViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.game_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        text_view_count_info.text = "Taps"
-        text_view_time_info.text = "Time"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,35 +53,41 @@ class GameFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(activity!!.application))
-                .get(GameViewModel::class.java).apply {
-                    init()
-                    time.observe(viewLifecycleOwner, Observer {
-                        text_view_time.text = it
-                    })
-                    taps.observe(viewLifecycleOwner, Observer {
-                        text_view_count.text = it.toString()
-                    })
-                    play.observe(viewLifecycleOwner, Observer {
-                        text_view_play.text = it
-                    })
-                    dialog.observe(viewLifecycleOwner, Observer {
-                        showAlertDialog(it)
-                    })
-                    isRunning.observe(viewLifecycleOwner, Observer {
-                        if (it) {
-                            if (viewModel.remainingTime.value != null && viewModel.remainingTime.value != 0L)
-                                prepareTimer()
-                            countDownTimer.start()
-                            hidePrepareCountdown()
-                        } else {
-                            countDownTimer.cancel()
-                            showPrepareCountdown()
-                        }
-                    })
-                }
+            .get(GameViewModel::class.java).apply {
+                init()
+                time.observe(viewLifecycleOwner, Observer {
+                    text_view_time.text = it
+                })
+                taps.observe(viewLifecycleOwner, Observer {
+                    text_view_count.text = it.toString()
+                })
+                play.observe(viewLifecycleOwner, Observer {
+                    text_view_play.text = it
+                })
+                dialog.observe(viewLifecycleOwner, Observer {
+                    showAlertDialog(it)
+                })
+                isRunning.observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        if (viewModel.remainingTime.value != null && viewModel.remainingTime.value != 0L)
+                            prepareTimer()
+                        countDownTimer.start()
+                        hidePrepareCountdown()
+                    } else {
+                        countDownTimer.cancel()
+                        showPrepareCountdown()
+                    }
+                })
+            }
+        initMinValueFromBundle()
+        prepareTimer()
         constrain_layout_game.setOnClickListener {
             viewModel.incrementTapsNumber()
         }
+    }
+
+    fun initMinValueFromBundle() = arguments?.let {
+        viewModel.min.value = GameFragmentArgs.fromBundle(it).min
     }
 
 
@@ -99,25 +98,23 @@ class GameFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.pasueGame()
+        viewModel.pauseGame()
     }
 
-    fun showAlertDialog(message: String) {
+    private fun showAlertDialog(message: String) {
         val builder: AlertDialog.Builder? = activity?.let {
             AlertDialog.Builder(it)
         }
         builder?.setMessage(message)
-        builder?.setTitle("Game ened")
+        builder?.setTitle("Game ended")
         builder?.setCancelable(false)
         builder?.apply {
-            setPositiveButton("OK", DialogInterface.OnClickListener { dialog, id ->
-                findNavController().navigate(R.id.action_gameEndFragment_to_recordsFragment)
-            })
+            setPositiveButton("OK") { _, _ ->
+                findNavController().popBackStack()
+            }
         }
         val dialog: AlertDialog? = builder?.create()
         dialog?.show()
-
-
     }
 
 
@@ -134,18 +131,18 @@ class GameFragment : Fragment() {
         }
     }
 
-    fun showPrepareCountdown() {
+    private fun showPrepareCountdown() {
         text_view_play.animate()
-                .alpha(1.0F).apply {
-                    duration = 1000L
-                }.start()
+            .alpha(1.0F).apply {
+                duration = 1000L
+            }.start()
     }
 
-    fun hidePrepareCountdown() {
+    private fun hidePrepareCountdown() {
         text_view_play.animate()
-                .alpha(0.0F).apply {
-                    duration = 1000L
-                }.start()
+            .alpha(0.0F).apply {
+                duration = 1000L
+            }.start()
     }
 
 }

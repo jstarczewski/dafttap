@@ -10,17 +10,16 @@
         android:label="records_fragment"
         tools:layout="@layout/records_fragment">
         <action
-            android:id="@+id/action_recordsFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
+                android:id="@+id/action_recordsFragment_to_gameFragment"
+                app:destination="@id/gameFragment" app:enterAnim="@anim/nav_default_enter_anim"
+        />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.clakestudio.pc.dafttapchallange.ui.game.GameFragment"
         android:label="game_fragment"
         tools:layout="@layout/game_fragment">
-        <action
-            android:id="@+id/action_gameEndFragment_to_recordsFragment"
-            app:destination="@id/recordsFragment" />
+        <argument android:name="min" app:argType="integer" android:defaultValue="0"/>
     </fragment>
 
 </navigation>
