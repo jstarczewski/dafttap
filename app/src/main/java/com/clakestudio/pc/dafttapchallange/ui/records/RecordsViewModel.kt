@@ -24,14 +24,15 @@ class RecordsViewModel(private val topScoresLocalDataSource: TopScoresDataSource
         .subscribe {
             if (!it.isNullOrEmpty()) {
                 it.sortedBy { it.score }
+                if (it.size > 5) {
+                    _scores.value = it.reversed().subList(0, 5)
+                    _min.value = it.reversed()[4].score
+                } else {
+                    _scores.value = it.reversed()
+                    _min.value = it.reversed()[it.size - 1].score
+                }
             }
-            if (it.size > 5) {
-                _scores.value = it.reversed().subList(0, 5)
-                _min.value = it.reversed()[4].score
-            } else {
-                _scores.value = it.reversed()
-                _min.value = it.reversed()[it.size-1].score
-            }
+
         })
 
     override fun onCleared() {

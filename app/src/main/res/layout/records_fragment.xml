@@ -19,12 +19,14 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="DaftTap Challenge" />
 
-    <TextView
+    <Button
         android:id="@+id/button_play"
         style="@style/TextAppearance.MaterialComponents.Headline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PLAY"
+        android:textColor="@color/colorAccent"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,6 +37,7 @@
         android:id="@+id/text_view_records_info"
         style="@style/TextAppearance.MaterialComponents.Headline4"
         android:layout_width="0dp"
+        android:layout_marginBottom="16dp"
         android:layout_height="wrap_content"
         android:text="RECORDS"
         android:textAlignment="center"

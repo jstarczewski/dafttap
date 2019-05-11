@@ -7,6 +7,7 @@ import com.clakestudio.pc.dafttapchallange.data.Score
 import com.clakestudio.pc.dafttapchallange.data.local.TopScoresDataSource
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) : ViewModel() {
 
-    private val prepareItems = arrayListOf("3","2", "1")
+    private val prepareItems = arrayListOf("3", "2", "1")
     private var tapsNumber = 0
 
     private val _taps: MutableLiveData<Int> = MutableLiveData()
@@ -39,17 +40,24 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
 
     val min = MutableLiveData<Int>()
 
+    private var wasInterruptedDuringPrepare = false
+
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
     fun incrementTapsNumber() {
         if (_isRunning.value != null && _isRunning.value!!)
             _taps.value = ++tapsNumber
     }
 
-    private fun saveScore(score: Int) =
+    private fun saveScore(score: Int) {
         Flowable.fromCallable {
             topScoresLocalDataSource.saveScore(Score(score, date))
         }.observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe()
+                .subscribeOn(Schedulers.io())
+                .subscribe()
+
+    }
+
 
     /*
     val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -98,28 +106,35 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
 
     private fun setDialogMessage() {
         if (tapsNumber > min.value!!)
-            _dialog.value = "Game eneded with score $tapsNumber\nYou made it to top"
+            _dialog.value = "You made it to records list with score of:"
         else
-            _dialog.value = "Game ended wit score $tapsNumber"
+            _dialog.value = "Score:"
+    }
+
+    fun clear() {
+        compositeDisposable.clear()
     }
 
     private fun saveGameStartTime() {
         date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().time)
     }
 
-    private fun prepare() = Flowable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
-        .take(3, TimeUnit.SECONDS)
-        .map { prepareItems[it.toInt()] }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnComplete {
-            _isRunning.value = true
-            _play.value = "PLAY"
-            if (date.isEmpty())
-                saveGameStartTime()
-        }
-        .subscribe {
-            _play.value = it
-        }
+    private fun prepare() = compositeDisposable.add(Flowable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())
+            .take(3, TimeUnit.SECONDS)
+            .map { prepareItems[if (it.toInt() == 3) it.toInt() - 1 else it.toInt()] }
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnComplete {
+                if (!wasInterruptedDuringPrepare) {
+                    _isRunning.value = true
+                    _play.value = "PLAY"
+                    if (date.isEmpty())
+                        saveGameStartTime()
+                    wasInterruptedDuringPrepare = false
+                }
+            }
+            .subscribe {
+                _play.value = it
+            })
 
 }
 

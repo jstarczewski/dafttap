@@ -37,6 +37,8 @@ class RecordsFragment : Fragment() {
             .get(RecordsViewModel::class.java).apply {
                 scores.observe(viewLifecycleOwner, Observer {
                     adapter.replaceData(it)
+                    if (!it.isNullOrEmpty())
+                        showRecords()
                 })
             }.apply {
                 init()
@@ -44,8 +46,18 @@ class RecordsFragment : Fragment() {
 
         setUpRecyclerView()
         button_play.setOnClickListener {
-            navigate()
+            animateOut()
         }
+        if (adapter.itemCount == 0)
+            hideRecords()
+    }
+
+    private fun hideRecords() {
+        text_view_records_info.visibility = View.INVISIBLE
+    }
+
+    private fun showRecords() {
+        text_view_records_info.visibility = View.VISIBLE
     }
 
     private fun setUpRecyclerView() {
@@ -56,9 +68,71 @@ class RecordsFragment : Fragment() {
         }
     }
 
+    private fun animateOutRecyclerView() {
+        recycler_view_top.animate()
+            .alpha(0.0F)
+            .apply {
+                duration = 100L
+            }
+            .withEndAction {
+                navigate()
+            }.start()
+    }
+
+    private fun animateOutGameTitle() {
+        text_view_game_name.animate()
+            .alpha(0.0F)
+            .apply {
+                duration = 100L
+            }
+            .start()
+    }
+
+    private fun animateOutPlayButton() {
+        button_play.animate()
+            .alpha(0.0F)
+            .apply {
+                duration = 100L
+            }
+            .start()
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    private fun animateOut() {
+        animateOutRecyclerView()
+        animateOutGameTitle()
+    }
+
+    /*
+    private fun animateIn() {
+        animateInRecylerView()
+        animateInGameTitle()
+    }
+
+    private fun animateInRecylerView() {
+        recycler_view_top.animate()
+            .alpha(1.0F)
+            .apply {
+                duration = 1000L
+            }
+            .start()
+    }
+
+    private fun animateInGameTitle() {
+        text_view_game_name.animate()
+            .alpha(1.0F)
+            .apply {
+                duration = 1000L
+            }
+            .start()
+    }*/
+
     private fun navigate() {
         val action = RecordsFragmentDirections.actionRecordsFragmentToGameFragment()
-        action.min = viewModel.min.value!!
+        action.min = viewModel.min.value ?: 0
         findNavController().navigate(action)
 
     }
