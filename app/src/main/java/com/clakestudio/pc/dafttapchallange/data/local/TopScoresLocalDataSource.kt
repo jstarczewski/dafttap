@@ -6,7 +6,7 @@ import io.reactivex.Flowable
 class TopScoresLocalDataSource(private val scoresDao: TopScoresDao) : TopScoresDataSource {
 
     override fun saveScore(score: Score) {
-        scoresDao.saveScore(DbScore(score.score, score.time))
+        scoresDao.saveScore(DbScore(0, score.score, score.time))
     }
 
 

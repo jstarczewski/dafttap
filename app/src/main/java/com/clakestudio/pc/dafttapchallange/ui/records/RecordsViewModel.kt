@@ -23,13 +23,12 @@ class RecordsViewModel(private val topScoresLocalDataSource: TopScoresDataSource
         .subscribeOn(Schedulers.io())
         .subscribe {
             if (!it.isNullOrEmpty()) {
-                it.sortedBy { it.score }
-                if (it.size > 5) {
-                    _scores.value = it.reversed().subList(0, 5)
-                    _min.value = it.reversed()[4].score
+                if (it.size >= 5) {
+                    _scores.value = it.sortedBy { it.score }.reversed().subList(0, 5)
+                    _min.value = it.sortedBy { it.score }.reversed()[4].score
                 } else {
-                    _scores.value = it.reversed()
-                    _min.value = it.reversed()[it.size - 1].score
+                    _scores.value = it.sortedBy { it.score }.reversed()
+                    _min.value = 0
                 }
             }
 

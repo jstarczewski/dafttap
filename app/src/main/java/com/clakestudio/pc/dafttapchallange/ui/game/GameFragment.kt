@@ -39,8 +39,8 @@ class GameFragment : Fragment() {
     private lateinit var viewModel: GameViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.game_fragment, container, false)
     }
@@ -56,32 +56,32 @@ class GameFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, ViewModelFactory.getInstance(activity!!.application))
-                .get(GameViewModel::class.java).apply {
-                    init()
-                    time.observe(viewLifecycleOwner, Observer {
-                        text_view_time.text = it
-                    })
-                    taps.observe(viewLifecycleOwner, Observer {
-                        text_view_count.text = it.toString()
-                    })
-                    play.observe(viewLifecycleOwner, Observer {
-                        text_view_play.text = it
-                    })
-                    dialog.observe(viewLifecycleOwner, Observer {
-                        showAlertDialog(it)
-                    })
-                    isRunning.observe(viewLifecycleOwner, Observer {
-                        if (it) {
-                            if (viewModel.remainingTime.value != null && viewModel.remainingTime.value != 0L)
-                                prepareTimer()
-                            countDownTimer.start()
-                            hidePrepareCountdown()
-                        } else {
-                            countDownTimer.cancel()
-                            showPrepareCountdown()
-                        }
-                    })
-                }
+            .get(GameViewModel::class.java).apply {
+                init()
+                time.observe(viewLifecycleOwner, Observer {
+                    text_view_time.text = it
+                })
+                taps.observe(viewLifecycleOwner, Observer {
+                    text_view_count.text = it.toString()
+                })
+                play.observe(viewLifecycleOwner, Observer {
+                    text_view_play.text = it
+                })
+                dialog.observe(viewLifecycleOwner, Observer {
+                    showAlertDialog(it)
+                })
+                isRunning.observe(viewLifecycleOwner, Observer {
+                    if (it) {
+                        if (viewModel.remainingTime.value != null && viewModel.remainingTime.value != 0L)
+                            prepareTimer()
+                        countDownTimer.start()
+                        hidePrepareCountdown()
+                    } else {
+                        countDownTimer.cancel()
+                        showPrepareCountdown()
+                    }
+                })
+            }
         initMinValueFromBundle()
         prepareTimer()
         constrain_layout_game.setOnClickListener {
@@ -89,7 +89,7 @@ class GameFragment : Fragment() {
         }
     }
 
-    fun initMinValueFromBundle() = arguments?.let {
+    private fun initMinValueFromBundle() = arguments?.let {
         viewModel.min.value = GameFragmentArgs.fromBundle(it).min
     }
 
@@ -117,7 +117,7 @@ class GameFragment : Fragment() {
         builder?.setView(dialogView)
         builder?.apply {
             setPositiveButton(
-                    "OK"
+                getString(R.string.ok)
             ) { _, _ ->
                 findNavController().popBackStack()
             }
@@ -142,20 +142,16 @@ class GameFragment : Fragment() {
 
     private fun showPrepareCountdown() {
         text_view_play.animate()
-                .alpha(1.0F).apply {
-                    duration = 1000L
-                }.start()
+            .alpha(1.0F).apply {
+                duration = 1000L
+            }.start()
     }
 
     private fun hidePrepareCountdown() {
-        text_view_instruction.animate()
-                .alpha(0.0F).apply {
-                    duration = 1000L
-                }.start()
         text_view_play.animate()
-                .alpha(0.0F).apply {
-                    duration = 1000L
-                }.start()
+            .alpha(0.0F).apply {
+                duration = 1000L
+            }.start()
     }
 
 

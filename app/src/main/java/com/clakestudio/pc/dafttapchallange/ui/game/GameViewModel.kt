@@ -105,7 +105,7 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
     }
 
     private fun setDialogMessage() {
-        if (tapsNumber > min.value!!)
+        if (tapsNumber >= min.value!!)
             _dialog.value = "You made it to records list with score of:"
         else
             _dialog.value = "Score:"
@@ -116,7 +116,7 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
     }
 
     private fun saveGameStartTime() {
-        date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().time)
+        date = SimpleDateFormat("HH:mm:ss dd -MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
     }
 
     private fun prepare() = compositeDisposable.add(Flowable.interval(0, 1, TimeUnit.SECONDS, Schedulers.io())

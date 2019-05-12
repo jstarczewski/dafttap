@@ -6,7 +6,8 @@ import java.util.*
 
 @Entity
 data class DbScore(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
     val score: Int,
     val time: String
 )
