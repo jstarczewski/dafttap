@@ -58,25 +58,6 @@ class GameViewModel(private val topScoresLocalDataSource: TopScoresDataSource) :
 
     }
 
-
-    /*
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-    val result = formatter.format(Calendar.getInstance().time)
-    val scores: ArrayList<Score> = arrayListOf()
-    if (!_scores.value.isNullOrEmpty())
-        scores.addAll(_scores.value!!)
-    scores.add(Score(score, result))
-    Flowable.fromCallable {
-        scores.forEach {
-            topScoresLocalDataSource.saveScore(it)
-        }
-    }.observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.io())
-        .subscribe()
-
-*/
-
-
     fun resumeGame() {
         prepare()
     }

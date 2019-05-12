@@ -88,47 +88,12 @@ class RecordsFragment : Fragment() {
             .start()
     }
 
-    private fun animateOutPlayButton() {
-        button_play.animate()
-            .alpha(0.0F)
-            .apply {
-                duration = 100L
-            }
-            .start()
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
     private fun animateOut() {
         animateOutRecyclerView()
         animateOutGameTitle()
     }
 
-    /*
-    private fun animateIn() {
-        animateInRecylerView()
-        animateInGameTitle()
-    }
 
-    private fun animateInRecylerView() {
-        recycler_view_top.animate()
-            .alpha(1.0F)
-            .apply {
-                duration = 1000L
-            }
-            .start()
-    }
-
-    private fun animateInGameTitle() {
-        text_view_game_name.animate()
-            .alpha(1.0F)
-            .apply {
-                duration = 1000L
-            }
-            .start()
-    }*/
 
     private fun navigate() {
         val action = RecordsFragmentDirections.actionRecordsFragmentToGameFragment()
