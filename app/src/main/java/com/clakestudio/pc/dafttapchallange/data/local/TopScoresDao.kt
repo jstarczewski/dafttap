@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.clakestudio.pc.dafttapchallange.data.Score
+import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
@@ -14,6 +15,6 @@ interface TopScoresDao {
     fun saveScore(score: DbScore)
 
     @Query("SELECT * FROM DbScore")
-    fun getTopScores(): Single<List<Score>>
+    fun getTopScores(): Flowable<List<Score>>
 
 }

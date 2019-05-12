@@ -9,5 +9,4 @@ object Injection {
     fun provideTopScoresLocalDataSource(context: Context): TopScoresLocalDataSource =
         TopScoresLocalDataSource.getInstance(ScoresDatabase.getInstance(context).topScoresDao())
 
-
 }

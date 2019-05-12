@@ -6,8 +6,8 @@ import java.util.*
 
 @Entity
 data class DbScore(
-    @PrimaryKey
-    val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
     val score: Int,
     val time: String
 )

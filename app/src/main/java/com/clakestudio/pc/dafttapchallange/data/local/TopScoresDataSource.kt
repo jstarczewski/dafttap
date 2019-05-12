@@ -1,9 +1,12 @@
 package com.clakestudio.pc.dafttapchallange.data.local
 
+import com.clakestudio.pc.dafttapchallange.data.Score
+import io.reactivex.Flowable
+
 interface TopScoresDataSource {
 
-    fun saveScore(record: String)
+    fun saveScore(score: Score)
 
-    fun getTopScores() : List<String>
+    fun getTopScores() : Flowable<List<Score>>
 
 }
